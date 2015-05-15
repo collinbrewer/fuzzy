@@ -1,5 +1,5 @@
-# Fuzzy Match
-Fuzzy Match is an extensible utility for computing the likelihood of one value matching another.
+# Fuzzy
+Fuzzy is an extensible utility for computing the likelihood of one value matching another.
 
 This value can also be thought of as the *strength* of the match or the percent similar.  The highest possible value is 1.0 denoting an exact similarity, and the lowest value 0.0 denoting a complete opposite.
 
@@ -35,13 +35,13 @@ fuzzy.indexOfBestMatch("Hello", ["Mornin'", "Howdy", "Hello"]);
 ```
 
 ## Defaults
-By default, the base implementation of Fuzzy's comparators are weighted linearly(or very close).  A linear comparator should return very close to a 1.0 in the case of exact similarities, a 0.0 in the case of exact opposites and somewhere around 0.5 when the
+Fuzzy's comparators assign strength linearly(or very close)... that is to say that exact matches are assigned a strength of 1.0 and grow increasingly closer to 0.0 as the values get more and more different until they are exact opposites, at which point, the strength should be 0.0.
 
-### Base Implementations
+### Base Comparators
 Below is a brief rundown of how each value type is compared in the default configuration.
 
 **Strings**  
-Strings are compared based on the number of characters that would need to be added and removed to make the strings exactly the same.  This computation is done relative to the size of the string because a one character change in a string that has only one character is
+Strings are compared based on the number of characters that would need to be added and removed to make the strings exactly the same.  This computation is done relative to the length of the string because a one character change in a string that has only one character is more impactful than a one character change in a string that has thirty characters.
 
 - **"Hello" and "Hello"** - No characters need to be changed, so this is a perfect score of 1.0.
 - **"ABC" and "XYZ"** - Every character had to change
@@ -57,8 +57,27 @@ fuzzy.compare({name:"Eric", age:29}, {name:"Eric", age:30});
 Numbers are actually one of the more complicated comparisons because while they can be exactly the same, they can also grow infinitely apart, but you can compare infinity. Two numbers are the same when they are mathematically equal.  The match loses strength as the two numbers grow apart.  
 
 
-## Extensibility & Configuration
-Fuzzy also offers extensions so you can decide just how fuzzy comparisons should be.  These extensions can be added per value type, per path, or on the fly for all values.
+## Configuration
+
+Fuzzy and each comparator can be configured to support different functionality using the *config* method.
+
+```javascript
+fuzzy.config(options);
+```
+
+### Descriptions
+
+- **Weight**: A value between 0.0 and 1.0 that is used to put more importance on a comparison than others.  For example, matching email addresses may be a stronger identifier of a match than first name, so it could be weighted higher.
+- **Scale** The scale used to compute the strength of the value between the given minimum and maximum values.
+- **Blacklist** A list of JSON Paths to be ignored in the comparisons.
+
+#### Weight
+Comparators can be
+
+
+## Extensibility
+
+Fuzzy also lets you hook into the comparator engine so you can decide just how fuzzy comparisons should be.  These extensions can be added per value type, per path, or on the fly for all values.
 
 For example, if we want to compare two date values purely based on their year, we can override the base implementation for the "date" value type using:
 
