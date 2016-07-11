@@ -27,6 +27,10 @@ var results=fuzzy.compare("Hello", "ello");
 For convenience, a few common operations are provided:
 
 ```javascript
+fuzzy.comparatorForType("string"); // get comparator by type
+
+fuzzy.comparatorForPath("/Todo/tags"); // get comparator by path
+
 fuzzy.strength("Hello", "ello"); // returns .89, the strength of the two values being a match
 
 fuzzy.equals("Hello", "ello"); // returns true because .89 is greater than the default threshold 0.8
